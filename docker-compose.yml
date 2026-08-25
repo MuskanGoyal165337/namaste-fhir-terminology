@@ -1,0 +1,60 @@
+services:
+  db:
+    image: pgvector/pgvector:pg16
+    container_name: ayush_pgvector_db
+    restart: always
+    environment:
+      POSTGRES_USER: ayush_user
+      POSTGRES_PASSWORD: ayush_password
+      POSTGRES_DB: ayush_terminology_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ayush_user -d ayush_terminology_db"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: ayush_fastapi_backend
+    restart: always
+    ports:
+      - "8000:8000"
+    environment:
+      - APP_NAME=AYUSH EMR Terminology Microservice
+      - APP_ENV=development
+      - LOG_LEVEL=INFO
+      - POSTGRES_USER=ayush_user
+      - POSTGRES_PASSWORD=ayush_password
+      - POSTGRES_DB=ayush_terminology_db
+      - POSTGRES_HOST=db
+      - POSTGRES_PORT=5432
+      - DATABASE_URL=postgresql://ayush_user:ayush_password@db:5432/ayush_terminology_db
+      - ALLOWED_ORIGINS=http://localhost:3000,http://localhost:5174,http://localhost:5173,http://localhost:80,http://127.0.0.1:5174,http://127.0.0.1:5173
+    depends_on:
+      db:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: ayush_vite_frontend
+    restart: always
+    ports:
+      - "5174:80"
+    depends_on:
+      - backend
+
+volumes:
+  pgdata:

@@ -1,0 +1,42 @@
+{
+  "_note": "DEVELOPMENT / TEST RULES ONLY. These are NOT official NHCX payer rules. Configure NHCX_RULES_PATH env var to load official rules when available.",
+  "rule_source": "development",
+  "version": "dev-0.1",
+  "rules": [
+    {
+      "rule_id": "DEV-NHCX-001",
+      "description": "Claim must include at least one Condition coding",
+      "condition": "has_condition_coding",
+      "message": "NHCX claim must include at least one Condition coding.",
+      "severity": "error",
+      "suggestedFix": "Add a Condition resource with a valid coding to the Bundle."
+    },
+    {
+      "rule_id": "DEV-NHCX-002",
+      "description": "Condition coding must have a recognised AYUSH system URI",
+      "condition": "recognised_system_uri",
+      "allowed_systems": [
+        "http://namaste.ayush.gov.in",
+        "http://id.who.int/icd/release/11/mms",
+        "http://snomed.info/sct",
+        "NAMASTE",
+        "Ayurveda",
+        "Siddha",
+        "Unani",
+        "Yoga"
+      ],
+      "message": "Condition coding system is not a recognised AYUSH or standard medical system.",
+      "severity": "warning",
+      "suggestedFix": "Use a recognised coding system such as the NAMASTE URI or ICD-11 MMS URI."
+    },
+    {
+      "rule_id": "DEV-NHCX-003",
+      "description": "Claim should include a TM2 code for traditional medicine conditions",
+      "condition": "tm2_code_present",
+      "tm2_prefixes": ["TM2-", "AAA-"],
+      "message": "No TM2 code found in condition codings. NHCX recommends including a TM2 code for traditional medicine claims.",
+      "severity": "warning",
+      "suggestedFix": "Map the AYUSH condition to its corresponding ICD-11 TM2 code and include it in the Bundle."
+    }
+  ]
+}

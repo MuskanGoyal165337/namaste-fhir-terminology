@@ -1,0 +1,45 @@
+{
+  "_note": "DEVELOPMENT / TEST RULES ONLY. These are NOT official ICD-11 rules. They are clearly-labelled placeholder rules for development and testing. Configure ICD11_RULES_PATH env var to load official rules when available.",
+  "rule_source": "development",
+  "version": "dev-0.2",
+  "rules": [
+    {
+      "rule_id": "DEV-ICD11-001",
+      "description": "TM2/NAMASTE/ICD-11 code must start with a recognised prefix",
+      "condition": "code_prefix",
+      "allowed_prefixes": [
+        "TM2-", "AAA-", "AAC", "AYU-", "UNA-", "SID-",
+        "SL", "SM", "SP", "SE",
+        "UE",
+        "EA", "EC",
+        "UA", "UB", "UC", "UD", "UF", "UG", "UH", "UI", "UJ", "UK", "UL", "UM", "UN", "UO", "UP", "UQ", "UR", "US", "UT", "UU", "UV", "UW", "UX", "UY", "UZ",
+        "SA", "SB", "SC", "SD", "SF", "SG", "SH", "SI", "SJ", "SK",
+        "HA", "HB", "HC", "HD", "HE", "HF", "HG", "HH", "HI", "HJ", "HK", "HL",
+        "DA", "DB", "DC", "DD", "DE", "DF", "DG", "DH",
+        "MA", "MB", "MC", "MD", "ME", "MF", "MG", "MH",
+        "CA", "CB", "CC", "CD",
+        "FA", "FB", "FC",
+        "LA", "LB", "LC"
+      ],
+      "message": "Code does not start with a recognised AYUSH/TM2/ICD-11 prefix.",
+      "severity": "warning",
+      "corrected_suggestion": "Verify the code against the NAMASTE / ICD-11 TM2 chapter or the local terminology database."
+    },
+    {
+      "rule_id": "DEV-ICD11-002",
+      "description": "Display name must not be empty",
+      "condition": "display_not_empty",
+      "message": "Condition display name is empty or missing.",
+      "severity": "error",
+      "corrected_suggestion": "Provide a non-empty display name for the condition."
+    },
+    {
+      "rule_id": "DEV-ICD11-003",
+      "description": "Code must not be null when system is specified",
+      "condition": "code_required_when_system",
+      "message": "A coding system was specified but no code was provided.",
+      "severity": "warning",
+      "corrected_suggestion": "Provide a code for the specified coding system, or remove the system reference."
+    }
+  ]
+}
