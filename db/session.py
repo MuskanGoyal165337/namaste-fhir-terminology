@@ -12,10 +12,24 @@ from pathlib import Path
 # Persistent SQLite fallback for local standalone execution when Postgres is absent
 sqlite_file = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "ayush_local.db"))
 
+def _normalize_db_url(url: str) -> str:
+    """
+    Normalize the database URL to ensure SQLAlchemy 2.0 compatibility.
+    Render and some cloud providers supply 'postgres://' but SQLAlchemy 2.0
+    requires the 'postgresql://' dialect prefix.
+    """
+    if url.startswith("postgres://"):
+        return url.replace("postgres://", "postgresql://", 1)
+    return url
+
+# Resolve and normalize DATABASE_URL at module load time
+_raw_db_url = settings.DATABASE_URL
+_db_url = _normalize_db_url(_raw_db_url)
+
 try:
-    if settings.DATABASE_URL.startswith("postgresql"):
+    if _db_url.startswith("postgresql"):
         engine = create_engine(
-            settings.DATABASE_URL,
+            _db_url,
             pool_pre_ping=True,
             echo=False
         )

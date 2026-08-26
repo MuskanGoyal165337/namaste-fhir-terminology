@@ -17,4 +17,6 @@ COPY . .
 
 EXPOSE 8000
 
-CMD ["uvicorn", "api.main:app", "--host", "0.0.0.0", "--port", "8000"]
+# Use shell form so $PORT is expanded at runtime.
+# Render injects $PORT; falls back to 8000 for local Docker usage.
+CMD uvicorn api.main:app --host 0.0.0.0 --port ${PORT:-8000}

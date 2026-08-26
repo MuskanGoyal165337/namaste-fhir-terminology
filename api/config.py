@@ -48,6 +48,13 @@ class Settings(BaseSettings):
     # Mock token accepted by MockABHAProvider (non-production use only)
     ABHA_MOCK_TOKEN: str = "test-mock-token"
 
+    # WHO ICD-11 MMS API Configuration
+    WHO_USE_MOCK: bool = True
+    WHO_API_URL: str = "https://id.who.int/icd/release/11/mms"
+    WHO_TOKEN_URL: str = "https://icdaccessmanagement.who.int/connect/token"
+    WHO_CLIENT_ID: str = ""
+    WHO_CLIENT_SECRET: str = ""
+
     if SettingsConfigDict is not None:
         model_config = SettingsConfigDict(
             env_file=".env",
@@ -60,6 +67,17 @@ class Settings(BaseSettings):
     def parse_cors_origins(cls, v: Union[str, List[str]]) -> List[str]:
         if isinstance(v, str):
             return [origin.strip() for origin in v.split(",") if origin.strip()]
+        return v
+
+    @field_validator("DATABASE_URL", mode="before")
+    @classmethod
+    def normalize_database_url(cls, v: str) -> str:
+        """
+        Normalize DATABASE_URL: Render and some cloud platforms supply the
+        legacy 'postgres://' scheme, but SQLAlchemy 2.0 requires 'postgresql://'.
+        """
+        if isinstance(v, str) and v.startswith("postgres://"):
+            return v.replace("postgres://", "postgresql://", 1)
         return v
 
 @lru_cache()
