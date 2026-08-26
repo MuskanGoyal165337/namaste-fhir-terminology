@@ -19,6 +19,7 @@ import {
   ShieldAlert
 } from 'lucide-react';
 import AnimatedNumber from '../components/AnimatedNumber.jsx';
+import { apiFetch } from '../api.js';
 
 const MOCK_TOKEN = 'test-mock-token';
 
@@ -141,7 +142,7 @@ export default function BundlePage({ selectedTermData, currentUser, selectedPati
       if (suggestedCode) body.suggested_code = suggestedCode;
       if (correctedCode) body.corrected_code = correctedCode;
 
-      const res = await fetch('/api/Bundle', {
+      const res = await apiFetch('/api/Bundle', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

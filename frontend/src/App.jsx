@@ -24,6 +24,7 @@ import LoginPage from './pages/LoginPage.jsx';
 import PeoplePage from './pages/PeoplePage.jsx';
 import HistoryPage from './pages/HistoryPage.jsx';
 import LandingPage from './pages/LandingPage.jsx';
+import { apiFetch } from './api.js';
 
 // ─── Mock Data ───────────────────────────────────────────────────────────────
 const MOCK_DOCTORS = [
@@ -226,13 +227,13 @@ export default function App() {
   }, []);
 
   useEffect(() => {
-    fetch('/health')
+    apiFetch('/health')
       .then(r => r.json())
       .then(d => setHealthStatus(d))
       .catch(() => setHealthStatus({ status: 'error' }));
 
     // ── Load Clinical History from DB ──
-    fetch('/api/history')
+    apiFetch('/api/history')
       .then(r => r.ok ? r.json() : [])
       .then(historyData => {
         if (Array.isArray(historyData) && historyData.length > 0) {
@@ -242,7 +243,7 @@ export default function App() {
       .catch(e => console.error("Error fetching history from DB:", e));
 
     // ── Load Doctor-Patient Connections from DB ──
-    fetch('/api/connections')
+    apiFetch('/api/connections')
       .then(r => r.ok ? r.json() : [])
       .then(connectionsData => {
         if (Array.isArray(connectionsData) && connectionsData.length > 0) {
@@ -293,7 +294,7 @@ export default function App() {
       }));
 
       // ── Persist connection permanently in database ──
-      fetch('/api/connections', {
+      apiFetch('/api/connections', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -373,7 +374,7 @@ export default function App() {
     setClinicalHistory(prev => [entry, ...prev]);
 
     // ── Persist history entry permanently in database ──
-    fetch('/api/history', {
+    apiFetch('/api/history', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({

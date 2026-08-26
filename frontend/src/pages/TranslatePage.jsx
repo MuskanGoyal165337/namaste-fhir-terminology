@@ -13,6 +13,7 @@ import {
   Zap,
   ArrowDown
 } from 'lucide-react';
+import { apiFetch } from '../api.js';
 
 const TARGET_SYSTEMS = [
   'ICD-11-TM2',
@@ -46,7 +47,7 @@ export default function TranslatePage({ selectedTermData }) {
     setLoading(true);
     setError(null);
     try {
-      const res = await fetch('/api/$translate', {
+      const res = await apiFetch('/api/$translate', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ source_code: code, target_system: targetSystem }),

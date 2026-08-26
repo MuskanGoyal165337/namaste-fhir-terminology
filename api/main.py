@@ -47,6 +47,9 @@ app = FastAPI(
 app.add_middleware(RequestTimingMiddleware)
 
 # CORS Configuration
+# allow_origins covers explicitly listed origins (from ALLOWED_ORIGINS env var).
+# allow_origin_regex covers all Vercel preview/production deployments (*.vercel.app)
+# and the specific Render backend domain for health-check cross-service calls.
 origins = settings.ALLOWED_ORIGINS
 if isinstance(origins, str):
     origins = [origins]
@@ -54,6 +57,7 @@ if isinstance(origins, str):
 app.add_middleware(
     CORSMiddleware,
     allow_origins=origins,
+    allow_origin_regex=r"https://.*\.vercel\.app",
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],

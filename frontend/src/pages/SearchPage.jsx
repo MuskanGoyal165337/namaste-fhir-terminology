@@ -17,6 +17,7 @@ import {
   FileText
 } from 'lucide-react';
 import AnimatedNumber from '../components/AnimatedNumber.jsx';
+import { apiFetch } from '../api.js';
 
 const SYSTEMS = ['', 'Ayurveda', 'Siddha', 'Unani', 'Yoga & Naturopathy'];
 const LANGUAGES = ['', 'en', 'sa', 'hi', 'ta', 'ur'];
@@ -210,7 +211,7 @@ export default function SearchPage({ selectedTermData, onSelectTerm }) {
       const params = new URLSearchParams({ q: term, limit });
       if (system) params.set('system', system);
       if (lang)   params.set('lang', lang);
-      const res = await fetch(`/api/$expand?${params}`);
+      const res = await apiFetch(`/api/$expand?${params}`);
       const data = await res.json();
       if (!res.ok) throw new Error(data.detail?.message || data.detail || 'Search failed');
       setResults(data);

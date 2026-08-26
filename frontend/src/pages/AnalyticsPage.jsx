@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { apiFetch } from '../api.js';
 
 const MOCK_TOKEN = 'test-mock-token';
 
@@ -127,7 +128,7 @@ function useAnalytics(endpoint) {
 
   useEffect(() => {
     setLoading(true);
-    fetch(`/api/analytics/${endpoint}`, {
+    apiFetch(`/api/analytics/${endpoint}`, {
       headers: { Authorization: `Bearer ${MOCK_TOKEN}` },
     })
       .then(r => r.json())
